@@ -44,7 +44,8 @@ app.post("/generate", async (req, res) => {
     const imgPart = data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData || p.inline_data);
     const imgData = imgPart?.inlineData?.data || imgPart?.inline_data?.data;
 
-    if (!imgData) {
+    if 
+      console.log("Gemini response:", JSON.stringify(data));(!imgData) {
       return res.status(500).json({ error: "No image returned", raw: data });
     }
 
