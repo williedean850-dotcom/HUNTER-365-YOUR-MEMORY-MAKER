@@ -60,11 +60,42 @@ function loadPhoto(n){
   r.readAsDataURL(f);
 }
   function generateImg(){
-  alert("Generate button works! Next we'll connect this to the AI.");
-  }
+  var desc = document.getElementById("descI").value;
+  var photos = [];
+  [1,2,3].forEach(function(n){
+    var img = document.getElementById("p"+n);
+    if(img.src && img.src.startsWith("data:")) photos.push(img.src);
+  });
+
+  var out = document.getElementById("genO");
+  out.className = "out mt";
+  out.innerText = "Creating your image... this can take up to a minute.";
+
+  fetch("https://hunter-365-your-memory-maker-1.onrender.com/generate", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ description: desc, photos: photos })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.image){
+      out.className = "out";
+      out.innerHTML = '<img src="'+data.image+'" style="width:100%;border-radius:10px;">';
+    } else {
+      out.className = "out mt";
+      out.innerText = "Something went wrong: " + (data.error || "unknown error");
+    }
+  })
+  .catch(function(err){
+    out.className = "out mt";
+    out.innerText = "Error: " + err.message;
+  });
+      }
+  
+  
     
   
-  }
+  
 </script>
 </body>
 </html>
