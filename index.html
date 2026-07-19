@@ -37,7 +37,16 @@ h1{font-size:22px;text-align:center;margin:10px 0 4px;}
     </div>
   </div>
 
+  <div class="section">
+    <h2>Describe Your Image</h2>
+    <textarea id="descI" placeholder="Describe exactly what you want the final image to look like..." maxlength="2000"></textarea>
+    <button class="genbtn" id="genB" onclick="generateImg()">Generate</button>
+    <div id="genO" class="out mt">Your AI image will appear here.</div>
+  </div>
+
 </div>
+
+
 <script>
 function loadPhoto(n){
   var f=document.getElementById("p"+n+"i").files[0];
