@@ -78,7 +78,7 @@ function generateImg(){
   .then(function(data){
     if(data.image){
       out.className = "out";
-      out.innerHTML = '<img src="'+data.image+'" style="width:100%;border-radius:10px;">';
+      out.innerHTML = '<img src="'+data.image+'" style="width:100%;border-radius:10px;"><a href="'+data.image+'" download="hunter365-memory.png" style="display:block;text-align:center;margin-top:10px;padding:12px;background:#e6231e;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;">Download Image</a>';
     } else {
       out.className = "out mt";
       out.innerText = "Something went wrong: " + (data.error || "unknown error");
