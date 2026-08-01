@@ -31,8 +31,8 @@ textarea{width:100%;min-height:90px;padding:12px;background:#1a1a20;color:var(--
 
   <div class="section">
     <h2>Reference Photos (up to 3)</h2>
-    <div class="photos">
-      <label class="pslot"><span id="p1t">+</span><img id="p1" style="display:none"><input type="file" id="p1i" accept="image/*" onchange="loadPhoto(1)"></label>
+    <div class="photos"
+      <label class="pslot"><span id="p1t">+</span><img id="p1" style="display:none"><input type="file" id="p1i" accept="image/*" multiple onchange="loadPhotos(this.files)"></label>
       <label class="pslot"><span id="p2t">+</span><img id="p2" style="display:none"><input type="file" id="p2i" accept="image/*" onchange="loadPhoto(2)"></label>
       <label class="pslot"><span id="p3t">+</span><img id="p3" style="display:none"><input type="file" id="p3i" accept="image/*" onchange="loadPhoto(3)"></label>
     </div>
