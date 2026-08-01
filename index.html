@@ -92,7 +92,7 @@ function generateImg(){
   "Sketch": "Create a pencil sketch drawing style image, black and white line art. ",
   "Vintage": "Create a vintage old-timey style image, sepia tones, aged photo look, nostalgic feel. "
 };
-  var desc = document.getElementById("descI").value;
+var desc = stylePrompts[selectedStyle] + document.getElementById("descI").value;
   var photos = [];
   [1,2,3].forEach(function(n){
     var img = document.getElementById("p"+n);
