@@ -86,6 +86,12 @@ function loadPhoto(n){
 }
 
 function generateImg(){
+  var stylePrompts = {
+  "Realistic": "Create a photorealistic image. ",
+  "Animated": "Create a colorful animated cartoon-style image. ",
+  "Sketch": "Create a pencil sketch drawing style image, black and white line art. ",
+  "Vintage": "Create a vintage old-timey style image, sepia tones, aged photo look, nostalgic feel. "
+};
   var desc = document.getElementById("descI").value;
   var photos = [];
   [1,2,3].forEach(function(n){
