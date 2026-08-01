@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunter 365 - Your Memory Maker</title>
+<style>
+:root{--red:#e6231e;--panel:#121217;--pb:#262630;--txt:#f2f2f0;--dim:#9a9aa3;}
+*{box-sizing:border-box;}
+body{font-family:Arial,sans-serif;background:radial-gradient(circle at 50% 0%,#1a0a0a,#07070a 55%);color:var(--txt);margin:0;padding:0;min-height:100vh;}
+.wrap{max-width:460px;margin:0 auto;padding:18px 16px 40px;}
+.logo{width:90%;height:auto;border-radius:12px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;}
+.section{background:var(--panel);border:1px solid var(--pb);border-radius:12px;padding:16px;margin-bottom:16px;}
+.section h2{font-size:15px;margin:0 0 12px;color:var(--red);}
+.photos{display:flex;gap:10px;}
+.pslot{flex:1;aspect-ratio:1;background:#1a1a20;border:2px dashed var(--pb);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--dim);cursor:pointer;position:relative;overflow:hidden;}
+.pslot img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
+.pslot input{display:none;}
+textarea{width:100%;min-height:90px;padding:12px;background:#1a1a20;color:var(--txt);border-radius:10px;border:1px solid var(--pb);font-size:15px;font-family:inherit;resize:vertical;margin-bottom:12px;}
+.styles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.stylebtn{flex:1;min-width:45%;padding:10px;border-radius:8px;border:1px solid var(--pb);background:#1a1a20;color:var(--txt);font-size:13px;font-weight:700;cursor:pointer;text-align:center;}
+.stylebtn.active{background:var(--red);border-color:var(--red);color:#fff;}
+.genbtn{width:100%;padding:13px;border:none;border-radius:10px;background:var(--red);color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
+.out{background:#1a1a20;border:1px solid var(--pb);padding:14px;border-radius:10px;font-size:14px;line-height:1.6;margin-top:12px;}
+.out.mt{color:var(--dim);font-style:italic;}
+
+/* High-tech thinking indicator */
+.thinking-box{text-align:center;padding:22px 10px 18px;font-style:normal;}
+.brain-wrap{position:relative;width:72px;height:72px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;}
+.brain-ring{position:absolute;inset:0;border:2px solid var(--red);border-radius:50%;opacity:0.7;animation:pulse-ring 1.6s ease-out infinite;}
+.brain-ring.r2{animation-delay:0.5s;}
+.brain-ring.r3{animation-delay:1s;}
+.brain-icon{font-size:32px;position:relative;z-index:2;animation:brain-pulse 1.2s ease-in-out infinite;filter:drop-shadow(0 0 6px var(--red));}
+@keyframes pulse-ring{0%{transform:scale(0.55);opacity:0.85;}100%{transform:scale(1.5);opacity:0;}}
+@keyframes brain-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+.thinking-text{font-family:'Courier New',monospace;letter-spacing:1.5px;color:var(--red);font-size:13px;text-transform:uppercase;font-weight:700;}
+.thinking-text .dots{display:inline-block;width:18px;text-align:left;}
+.thinking-sub{font-family:'Courier New',monospace;color:var(--dim);font-size:11px;margin-top:6px;letter-spacing:0.5px;}
+.thinking-bar{width:100%;height:4px;background:#0d0d10;border-radius:2px;overflow:hidden;margin-top:14px;border:1px solid var(--pb);}
+.thinking-bar-fill{height:100%;width:35%;background:linear-gradient(90deg,transparent,var(--red),transparent);border-radius:2px;animation:scan-bar 1.3s ease-in-out infinite;}
+@keyframes scan-bar{0%{margin-left:-35%;}100%{margin-left:100%;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img src="logo.jpg" class="logo">
+
+  <div class="section">
+    <h2>Reference Photos (up to 3)</h2>
+    <div class="photos">
+      <label class="pslot"><span id="p1t">+</span><img id="p1" style="display:none"><input type="file" id="p1i" accept="image/*" onchange="loadPhoto(1)"></label>
+      <label class="pslot"><span id="p2t">+</span><img id="p2" style="display:none"><input type="file" id="p2i" accept="image/*" onchange="loadPhoto(2)"></label>
+      <label class="pslot"><span id="p3t">+</span><img id="p3" style="display:none"><input type="file" id="p3i" accept="image/*" onchange="loadPhoto(3)"></label>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Describe Your Image</h2>
+    <textarea id="descI" placeholder="Describe exactly what you want the final image to look like..." maxlength="2000"></textarea>
+
+    <h2>Choose a Style</h2>
+    <div class="styles" id="styleBtns">
+      <button type="button" class="stylebtn active" data-style="Realistic">Realistic</button>
+      <button type="button" class="stylebtn" data-style="Animated">Animated</button>
+      <button type="button" class="stylebtn" data-style="Sketch">Sketch</button>
+      <button type="button" class="stylebtn" data-style="Vintage">Vintage/Old-timey</button>
+    </div>
+
+    <button class="genbtn" id="genB" onclick="generateImg()">Generate</button>
+    <div id="genO" class="out mt">Your AI image will appear here.</div>
+  </div>
+
+</div>
+
+<script>
+var selectedStyle = "Realistic";
+var thinkingInterval = null;
+
+window.addEventListener("DOMContentLoaded", function(){
+  var btns = document.querySelectorAll(".stylebtn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener("click", function(){
+      var all = document.querySelectorAll(".stylebtn");
+      for (var j = 0; j < all.length; j++) {
+        all[j].classList.remove("active");
+      }
+      this.classList.add("active");
+      selectedStyle = this.getAttribute("data-style");
+    });
+  }
+});
+
+function loadPhoto(n){
+  var f=document.getElementById("p"+n+"i").files[0];
+  if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    document.getElementById("p"+n).src=e.target.result;
+    document.getElementById("p"+n).style.display="block";
+    document.getElementById("p"+n+"t").style.display="none";
+  };
+  r.readAsDataURL(f);
+}
+
+function showThinking(){
+  var out = document.getElementById("genO");
+  out.className = "out";
+  out.innerHTML =
+    '<div class="thinking-box">' +
+      '<div class="brain-wrap">' +
+        '<div class="brain-ring r1"></div>' +
+        '<div class="brain-ring r2"></div>' +
+        '<div class="brain-ring r3"></div>' +
+        '<div class="brain-icon">\uD83E\uDDE0</div>' +
+      '</div>' +
+      '<div class="thinking-text">HUNTER IS THINKING<span class="dots" id="thinkDots">.</span></div>' +
+      '<div class="thinking-sub">Rendering your memory... this can take up to a minute.</div>' +
+      '<div class="thinking-bar"><div class="thinking-bar-fill"></div></div>' +
+    '</div>';
+
+  var dotCount = 1;
+  clearInterval(thinkingInterval);
+  thinkingInterval = setInterval(function(){
+    dotCount = (dotCount % 3) + 1;
+    var d = document.getElementById("thinkDots");
+    if(d) d.innerText = ".".repeat(dotCount);
+  }, 450);
+}
+
+function stopThinking(){
+  clearInterval(thinkingInterval);
+  thinkingInterval = null;
+}
+
+function generateImg(){
+  var stylePrompts = {
+    "Realistic": "Create a photorealistic image. ",
+    "Animated": "Create a colorful animated cartoon-style image. ",
+    "Sketch": "Create a pencil sketch drawing style image, black and white line art. ",
+    "Vintage": "Create an authentic Old West country western style image, sepia-toned like a 1800s tintype photograph, with rustic wooden textures, vintage cowboy/frontier clothing styling, weathered and aged look, warm brown tones, dusty western saloon or ranch atmosphere, horses and hitching posts nearby if fitting the scene. "
+  };
+  var desc = stylePrompts[selectedStyle] + document.getElementById("descI").value;
+  var photos = [];
+  [1,2,3].forEach(function(n){
+    var img = document.getElementById("p"+n);
+    if(img.src && img.src.startsWith("data:")) photos.push(img.src);
+  });
+
+  showThinking();
+
+  fetch("https://hunter-365-your-memory-maker-1.onrender.com/generate", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ description: desc, photos: photos })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    stopThinking();
+    var out = document.getElementById("genO");
+    if(data.image){
+      out.className = "out";
+      out.innerHTML = '<img src="'+data.image+'" style="width:100%;border-radius:10px;"><a href="'+data.image+'" download="hunter365-memory.png" style="display:block;text-align:center;margin-top:10px;padding:12px;background:#e6231e;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;">Download Image</a>';
+    } else {
+      out.className = "out mt";
+      out.innerText = "Something went wrong: " + (data.error || "unknown error");
+    }
+  })
+  .catch(function(err){
+    stopThinking();
+    var out = document.getElementById("genO");
+    out.className = "out mt";
+    out.innerText = "Error: " + err.message;
+  });
+}
+</script>
+</body>
+</html>
